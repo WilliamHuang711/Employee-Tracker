@@ -5,22 +5,28 @@ USE employee_cms_db;
 
 CREATE TABLE departments (
   id INT NOT NULL AUTO_INCREMENT,
-  name VARCHAR(100) NOT NULL,
-  PRIMARY KEY (id)
+  name VARCHAR(30),
 );
 
-CREATE TABLE role (
+CREATE TABLE roles (
   id INT NOT NULL AUTO_INCREMENT,
-  title VARCHAR(100) NOT NULL,
+  title VARCHAR(100),
   salary DECIMAL(10,2) NOT NULL,
-  department_id INT NOT NULL,
-  PRIMARY KEY (id)
+  department_id INT,
+  FOREIGN KEY (department_id)
+  REFERENCES departments(id)
+  ON DELETE SET NULL
 );
 
-CREATE TABLE  employee (
-    id INT NOT NULL AUTO_INCREMENT, 
-    first_name VARCHAR(30) NOT NULL, 
-    last_name  VARCHAR(30) NOT NULL, 
+CREATE TABLE  employees (
+    id INT PRIMARY KEY AUTO_INCREMENT, 
+    first_name VARCHAR(30), 
+    last_name  VARCHAR(30), 
     role_id INT, 
-    manager_id INT NULL
+    manager_id INT,
+    FOREIGN KEY (role_id)
+    REFERENCES roles(id),
+    FOREIGN KEY (manager_id)
+    REFERENCES employees(id)
+    ON DELETE SET NULL
 )
