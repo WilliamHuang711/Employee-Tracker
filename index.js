@@ -99,7 +99,7 @@ const connection = mysql.createConnection({
   //View Employees
   
   function viewEmployees() {
-    connection.query("SELECT * FROM employees", function (err, results) {
+    connection.query("SELECT employees.id, employees.first_name, employees.last_name, roles.title, roles.salary, departments.name AS departments, CONCAT(manager.first_name, ' ', manager.last_name) as Manager FROM employees LEFT JOIN roles on employees.role_id = roles.id LEFT JOIN departments ON roles.department_id= departments.id LEFT JOIN employees manager on manager.id = employees.manager_id;", function (err, results) {
       if (err) throw err;
       console.table(results);
       startMenu();
@@ -118,7 +118,7 @@ const connection = mysql.createConnection({
         },
       ])
       .then(results=> {
-          let {department} = results;
+          const {department} = results;
           connection.query("INSERT INTO departments SET ?", {name: department}, function (err, results) {
           if (err) throw err;
           console.table(results);
@@ -134,7 +134,7 @@ const connection = mysql.createConnection({
   function addRoles() {
     connection.query("SELECT id, name FROM departments",function (err, data) {
       if (err) throw err;
-    let departments = data.map(item => {
+    const departments = data.map(item => {
       return {value:item.id, name:item.name}
     })
     inquirer
@@ -157,6 +157,7 @@ const connection = mysql.createConnection({
       },
     ])
     .then(results=> {
+        console.log(results)
         connection.query("INSERT INTO roles SET ?", {title:results.roleTitle, salary:results.roleSalary, department_id:results.choice}, function (err, results) {
         if (err) throw err;
         console.table(results);
@@ -171,14 +172,14 @@ const connection = mysql.createConnection({
   //Add Employees
   
   function addEmployees() {
-    connection.query("SELECT id, title, FROM roles",function (err, data) {
+    connection.query("SELECT id, title FROM roles",function (err, data) {
       if (err) throw err;
-    let roles = data.map(item => {
+    const roles = data.map(item => {
       return {value:item.id, name:item.title }
     })
     connection.query("SELECT id, first_name, last_name, manager_id FROM employees",function (err, data) {
       if (err) throw err;
-    let managers = data.map(item => {
+    const managers = data.map(item => {
       return {value:item.id, name:item.first_name, name:item.last_name}
     })
     inquirer
@@ -207,6 +208,7 @@ const connection = mysql.createConnection({
       },
     ])
     .then(results=> {
+      console.log(results);
         connection.query("INSERT INTO employees SET ?", {first_name: results.firstName, last_name: results.lastName, role_id:results.role, manager_id:results.manager}, function (err, results) {
         if (err) throw err;
         console.table(results);
@@ -220,12 +222,15 @@ const connection = mysql.createConnection({
   };
 
   function updateEmployees() {
-    connection.query("SELECT * from employees", function (err, data) {
+    connection.query("SELECT * FROM employees", function (err, data) {
       if (err) throw err;
-      let employeeChoice = data.map(item=> item.last_name)
+      const employeeChoice = data.map(item=> {
+        return {name:item.last_name}
+      })
+
     connection.query("SELECT * FROM roles", function (err, data){
       if (err) throw err;
-      let roleChoice= data.map(item=> item.title)
+      const roleChoice= data.map(item=> item.title)
     inquirer
     .prompt ([
       {
