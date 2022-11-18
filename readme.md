@@ -1,5 +1,6 @@
 # CMS Employee-tracker
-    This application is created for storing employee information, it will allow to add and update an employee roster members.
+    This application is created for storing employee information, 
+    it will allow to add and update an employee roster members.
 
 ## Installation
     In the command line of the working directory, istall the follwing npm packages:
@@ -11,7 +12,8 @@
           "asciiart-logo".
 
 ## Mock up
-    After you installed all the required npm packages, enter "node index" in the command linde of the working directory
+    After you installed all the required npm packages, 
+    enter "node index" in the command linde of the working directory
 <img src="1.png">
 <img src="2.png">
 
