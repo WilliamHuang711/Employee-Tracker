@@ -1,10 +1,10 @@
-// const express = require('express');
-// const app = express();
-const mysql = require('mysql2');
 const inquirer = require('inquirer');
-const cTable = require('console.table');
-require('dotenv').config();
 
+const mysql = require('mysql2');
+const cTable = require('console.table');
+
+const logo = require('asciiart-logo');
+require('dotenv').config();
 // app.use(express.urlencoded({ extended: false }));
 // app.use(express.json());
 
@@ -25,6 +25,17 @@ const connection = mysql.createConnection({
     console.log("You are connected!");
     startMenu();
   });
+
+  console.log(logo({ 
+    name: "Employee Tracker!",
+    font:"Slant",
+    logoColor: "bold-cyan",
+    textColor: "yellow"
+    })
+    .emptyLine()
+    .center("Welcome! Please select an option using the arrow keys to view or modify database tables")
+    .render());
+
   
   //Start Function
   
@@ -166,16 +177,17 @@ const connection = mysql.createConnection({
   //Add Employees
   
   function addEmployees() {
-    connection.query("SELECT id, title FROM roles",function (err, data) {
+    connection.query("SELECT id, title, department_id FROM roles",function (err, data) {
       if (err) throw err;
     let roles = data.map(item => {
       return {value:item.id, name:item.title }
     })
-    connection.query("SELECT first_name, last_name FROM employees",function (err, data) {
+    connection.query("SELECT first_name, last_name manager_id FROM employees",function (err, data) {
       if (err) throw err;
     let managers = data.map(item => {
       return {name:item.first_name, name:item.last_name, value:item.id}
     })
+    console.log(managers);
     inquirer
     .prompt([
       {
@@ -208,7 +220,7 @@ const connection = mysql.createConnection({
         console.table(results);
         console.log("Employee added to the database!");
         console.log("-------------------------\n");
-        viewRoles();
+        viewEmployees();
         });
   })
   })

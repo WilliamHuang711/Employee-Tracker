@@ -1,6 +1,10 @@
 {
   "dependencies": {
+    "asciiart-logo": "^0.2.7",
+    "console.table": "^0.10.0",
     "envdot": "^0.0.3",
-    "inquirer": "^9.1.4"
+    "inquirer": "^8.2.5",
+    "mysql": "^2.18.1",
+    "mysql2": "^2.3.3"
   }
 }
