@@ -19,7 +19,6 @@ VALUES ("Deputy-Director", 75000, 2),
        ("City Manager", 120000, 4),
        ("Senior Associate", 45000, 2),
        ("Office Manager", 60000,2),
-       ("Associate Administrator", 50000, 2);
 
 Insert INTO employees (first_name, last_name, role_id, manager_id)
 VALUES ("Leslie", "Knope", 1, null),
@@ -33,4 +32,3 @@ VALUES ("Leslie", "Knope", 1, null),
        ("Ben", "Wyatt", 9, 8),
        ("Jerry", "Gergich", 10, 1),
        ("Donna", "Meagle", 11, 1),
-       ("Craig", "Middlebrooks", 12, 1);

@@ -5,24 +5,19 @@ const cTable = require('console.table');
 
 const logo = require('asciiart-logo');
 require('dotenv').config();
-// app.use(express.urlencoded({ extended: false }));
-// app.use(express.json());
 
-// const port = process.env.PORT || 3001;
-// app.listen(port,()=>{
-//     console.log("listening on port:", port)
-// });
 
 const connection = mysql.createConnection({
     host: "localhost",
     user: "root",
     database: "employee_cms_db",
-    password: process.env.DB_PASSWORD,
+    password: "Hh1998711.",
   });
   
   connection.connect((err) => {
     if (err) throw err;
     console.log("You are connected!");
+    console.log('\n');
     startMenu();
   });
 
@@ -46,7 +41,7 @@ const connection = mysql.createConnection({
           type: "list",
           message: "Choose One",
           name: "choice",
-          choices: ["View Departments", "Add Departments", "View Roles","Add Roles", "View Employees","Add Employees", "Exit"],
+          choices: ["View Departments", "Add Departments", "View Roles","Add Roles", "View Employees","Add Employees","Update Employees", "Exit"],
         },
       ])
   
@@ -89,7 +84,7 @@ const connection = mysql.createConnection({
       console.table(results);
       startMenu();
     });
-  }
+  };
   
   //View Roles
   
@@ -162,7 +157,6 @@ const connection = mysql.createConnection({
       },
     ])
     .then(results=> {
-      //When adding department_id, returns a null value?
         connection.query("INSERT INTO roles SET ?", {title:results.roleTitle, salary:results.roleSalary, department_id:results.choice}, function (err, results) {
         if (err) throw err;
         console.table(results);
@@ -177,17 +171,16 @@ const connection = mysql.createConnection({
   //Add Employees
   
   function addEmployees() {
-    connection.query("SELECT id, title, department_id FROM roles",function (err, data) {
+    connection.query("SELECT id, title, FROM roles",function (err, data) {
       if (err) throw err;
     let roles = data.map(item => {
       return {value:item.id, name:item.title }
     })
-    connection.query("SELECT first_name, last_name manager_id FROM employees",function (err, data) {
+    connection.query("SELECT id, first_name, last_name, manager_id FROM employees",function (err, data) {
       if (err) throw err;
     let managers = data.map(item => {
-      return {name:item.first_name, name:item.last_name, value:item.id}
+      return {value:item.id, name:item.first_name, name:item.last_name}
     })
-    console.log(managers);
     inquirer
     .prompt([
       {
@@ -214,7 +207,6 @@ const connection = mysql.createConnection({
       },
     ])
     .then(results=> {
-       //When adding manager_id, returns a null value?
         connection.query("INSERT INTO employees SET ?", {first_name: results.firstName, last_name: results.lastName, role_id:results.role, manager_id:results.manager}, function (err, results) {
         if (err) throw err;
         console.table(results);
@@ -227,71 +219,38 @@ const connection = mysql.createConnection({
   })
   };
 
-
-
-// function start() {
-//     inquirer
-//         .prompt({
-//             name: "action",
-//             type: "rawlist",
-//             message: "What would you like to do?",
-//             choices: [
-//                 "View all employees",
-//                 "View all employees by department",
-//                 "View all employees by manager",
-//                 "Add employee",
-//                 "Remove employee",
-//                 "Update employee role",
-//                 "Update employee manager",
-//                 "Add role",
-//                 "View all roles",
-//                 "Remove role",
-//             ]
-//         })
-//         .then(function (answer) {
-//             switch (answer.action) {
-//                 case "View all employees":
-//                     viewAllEmployees();
-//                     break;
-
-//                 case "View all departments":
-//                     viewDepartment();
-//                     break;
-
-//                 case "View all employees by manager":
-//                     viewManager();
-//                     break;
-
-//                 case "Add employee":
-//                     addEmployee();
-//                     break;
-
-//                 case "Remove employee":
-//                     removeEmployee();
-//                     break;
-
-//                 case "Update employee role":
-//                     updateRole();
-//                     break;
-
-//                 case "Update employee manager":
-//                     updateManager();
-//                     break;
-
-//                 case "Add role":
-//                     addRole();
-//                     break;
-
-//                 case "View all roles":
-//                     viewAllRoles();
-//                     break;
-
-//                 case "Remove role":
-//                     removeRole();
-//                     break;
-
-
-
-//             }
-//         })
-// }
+  function updateEmployees() {
+    connection.query("SELECT * from employees", function (err, data) {
+      if (err) throw err;
+      let employeeChoice = data.map(item=> item.last_name)
+    connection.query("SELECT * FROM roles", function (err, data){
+      if (err) throw err;
+      let roleChoice= data.map(item=> item.title)
+    inquirer
+    .prompt ([
+      {
+        type: "list",
+        name: "employeeName",
+        message: "Choose an employee to update",
+        choices: employeeChoice,
+      },
+      {
+        type: "list",
+        name: "role",
+        message: "Choose a role for the employee ",
+        choices: roleChoice,
+      },
+    ])
+    .then(results => {
+      console.log(results);
+      connection.query("UPDATE employees INNER JOIN roles ON employees.role_id = roles.id SET ? WHERE ?", [{title: results.role},{last_name: results.employeeName}], function (err, results) {
+      if (err) throw err;
+        console.table(results);
+        console.log("Employee role has been updated!");
+        console.log("-------------------------\n");
+        viewEmployees();
+        });
+    })
+    }
+    )}
+    )};
